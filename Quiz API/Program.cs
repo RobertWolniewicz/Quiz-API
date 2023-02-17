@@ -23,8 +23,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-app.MapGet("/Questions/{category}", (IQuizServices service, QuizParameters param, Category category, User user)
+app.MapGet("/Quiz/{category}", (IQuizServices service, QuizParameters param, Category category, User user)
     => service.GetQuiz( category, param, user));
+app.MapPost("/Quiz",(IQuizServices service, User user, List<AnswersModel> Answers) 
+    =>service.PostResult( user, Answers));
 
 
 app.MapPost("/AddQuestions/{category}", (List<Question> Questions,Category category ) =>

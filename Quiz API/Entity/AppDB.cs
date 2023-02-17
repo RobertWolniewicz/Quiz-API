@@ -42,6 +42,18 @@ namespace Quiz_API.Entity
                 eb.HasMany(u => u.questionsList)
                 .WithMany(q => q.users);
             });
+            modelBuilder.Entity<EasyQuestion>(eb =>
+            {
+                eb.Property(u => u.Points).HasDefaultValue(1);
+            });
+            modelBuilder.Entity<MidQuestion>(eb =>
+            {
+                eb.Property(u => u.Points).HasDefaultValue(2);
+            });
+            modelBuilder.Entity<HardQuestion>(eb =>
+            {
+                eb.Property(u => u.Points).HasDefaultValue(3);
+            });
         }
     }
 }
