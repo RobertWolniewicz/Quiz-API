@@ -6,7 +6,7 @@ namespace Quiz_API.Services
 {
     public interface IQuizServices
     {
-        List<Question> GetQuiz(Category category, QuizParameters parameters, User user);
+        List<Question> GetQuiz (QuizParameters parameters, User user);
         int PostResult( User user, List<AnswersModel> Answers);
     }
 
@@ -17,26 +17,26 @@ namespace Quiz_API.Services
         {
             _dbContext = DbContext;
         }
-        public List<Question> GetQuiz(Category category, QuizParameters parameters, User user)
+        public List<Question> GetQuiz(QuizParameters parameters, User user)
         {
             var Questions = new List<Question>();
-            var easyQuestions = GetQuestions<EasyQuestion>(category, parameters.numberOfEasyQuestions);
-            var midQuestions = GetQuestions<MidQuestion>(category, parameters.numberOfMidQuestions);
-            var hardQuestions = GetQuestions<HardQuestion>(category, parameters.numberOfHardQuestions);
+            var easyQuestions = GetQuestions<EasyQuestion>(parameters.Category, parameters.NumberOfEasyQuestions);
+            var midQuestions = GetQuestions<MidQuestion>(parameters.Category, parameters.NumberOfMidQuestions);
+            var hardQuestions = GetQuestions<HardQuestion>(parameters.Category, parameters.NumberOfHardQuestions);
             foreach (Question question in easyQuestions)
             {
                 Questions.Add(question);
-                user.questionsList.Add (question);
+                user.QuestionsList.Add (question);
             }
             foreach (Question question in midQuestions)
             {
                 Questions.Add(question);
-                user.questionsList.Add(question);
+                user.QuestionsList.Add(question);
             }
             foreach (Question question in hardQuestions)
             {
                 Questions.Add(question);
-                user.questionsList.Add(question);
+                user.QuestionsList.Add(question);
             }
 
             return Questions;
@@ -44,12 +44,12 @@ namespace Quiz_API.Services
         public int PostResult(User user,  List<AnswersModel> Answers)
         {
             var result = 0;
-            foreach(Question question in user.questionsList)
+            foreach(Question question in user.QuestionsList)
             {
                 var questionAnswer = Answers.First(a => a.QuestionId == question.Id);
-                    if(question is EasyQuestion)
+                    if(question is EasyQuestion question1)
                 {
-                    if (questionAnswer.EasyAnswer==((EasyQuestion)question).CorrectAnswer)
+                    if (questionAnswer.EasyAnswer==question1.CorrectAnswer)
                     {
                         result += question.Points;
                     }
@@ -62,6 +62,7 @@ namespace Quiz_API.Services
                     }
                 }
             }
+            user.QuestionsList.Clear();
             return result;
         }
         List<T> GetQuestions<T>(Category category, int quantyty) where T : Question

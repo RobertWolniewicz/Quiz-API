@@ -4,9 +4,10 @@ namespace Quiz_API.Models
 {
     public class QuizParameters
     {
-        public int numberOfEasyQuestions { get; set; }
-        public int numberOfMidQuestions { get; set; }
-        public int numberOfHardQuestions { get; set; }
-        public User user { get; set; }
+        public Category Category { get; set; }
+        public int NumberOfEasyQuestions { get; set; }
+        public int NumberOfMidQuestions { get; set; }
+        public int NumberOfHardQuestions { get; set; }
+        public User User { get; set; }
     }
 }

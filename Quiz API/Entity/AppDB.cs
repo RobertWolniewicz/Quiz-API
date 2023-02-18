@@ -39,8 +39,8 @@ namespace Quiz_API.Entity
             });
             modelBuilder.Entity<User>(eb =>
             {
-                eb.HasMany(u => u.questionsList)
-                .WithMany(q => q.users);
+                eb.HasMany(u => u.QuestionsList)
+                .WithMany(q => q.Users);
             });
             modelBuilder.Entity<EasyQuestion>(eb =>
             {
