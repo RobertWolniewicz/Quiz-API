@@ -7,16 +7,16 @@ namespace Quiz_API.Entity
         public AppDB(DbContextOptions<AppDB> options) : base(options)
         { 
         }
-        public DbSet<EasyQuestion> easyQuestions;
-        public DbSet<MidQuestion> midQuestions;
-        public DbSet<HardQuestion> hardQuestions;
-        public DbSet<Answer> answers;
-        public DbSet<Company> companys;
-        public DbSet<CompanyUser> companyUsers;
-        public DbSet<PrivateUser> privateUsers;
-        public DbSet<Category> categories;
-        public DbSet<Question> questions;
-        public DbSet<User> users;
+        public DbSet<EasyQuestion> easyQuestions { get; set; }
+        public DbSet<MidQuestion> midQuestions { get; set; }
+        public DbSet<HardQuestion> hardQuestions { get; set; }
+        public DbSet<Answer> answers { get; set; }
+        public DbSet<Company> companys { get; set; }
+        public DbSet<CompanyUser> companyUsers { get; set; }
+        public DbSet<PrivateUser> privateUsers { get; set; }
+        public DbSet<Category> categories { get; set; }
+        public DbSet<Question> questions { get; set; }
+        public DbSet<User> users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,15 +45,19 @@ namespace Quiz_API.Entity
             modelBuilder.Entity<EasyQuestion>(eb =>
             {
                 eb.Property(u => u.Points).HasDefaultValue(1);
+                eb.ToTable("easyQuestions");
             });
             modelBuilder.Entity<MidQuestion>(eb =>
             {
                 eb.Property(u => u.Points).HasDefaultValue(2);
+                eb.ToTable("midQuestions");
             });
             modelBuilder.Entity<HardQuestion>(eb =>
             {
                 eb.Property(u => u.Points).HasDefaultValue(3);
+                eb.ToTable("hardQuestions");
             });
         }
+        
     }
 }

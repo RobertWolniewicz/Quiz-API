@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace QuizAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class EntityNavigationFirstversion : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Category",
+                name: "categories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -21,11 +21,11 @@ namespace QuizAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.PrimaryKey("PK_categories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Company",
+                name: "companys",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -35,26 +35,25 @@ namespace QuizAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Company", x => x.Id);
+                    table.PrimaryKey("PK_companys", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Question",
+                name: "questions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Points = table.Column<int>(type: "int", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Points = table.Column<int>(type: "int", nullable: false, defaultValue: 3)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Question", x => x.Id);
+                    table.PrimaryKey("PK_questions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -64,21 +63,22 @@ namespace QuizAPI.Migrations
                     EmailAddres = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: true)
+                    CompanyId = table.Column<int>(type: "int", nullable: true),
+                    SolvedQuizs = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_users", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_User_Company_CompanyId",
+                        name: "FK_users_companys_CompanyId",
                         column: x => x.CompanyId,
-                        principalTable: "Company",
+                        principalTable: "companys",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Answer",
+                name: "answers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -89,11 +89,11 @@ namespace QuizAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Answer", x => x.Id);
+                    table.PrimaryKey("PK_answers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Answer_Question_QuestionId",
+                        name: "FK_answers_questions_QuestionId",
                         column: x => x.QuestionId,
-                        principalTable: "Question",
+                        principalTable: "questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -109,15 +109,66 @@ namespace QuizAPI.Migrations
                 {
                     table.PrimaryKey("PK_CategoryQuestion", x => new { x.CategorysId, x.QuestionsId });
                     table.ForeignKey(
-                        name: "FK_CategoryQuestion_Category_CategorysId",
+                        name: "FK_CategoryQuestion_categories_CategorysId",
                         column: x => x.CategorysId,
-                        principalTable: "Category",
+                        principalTable: "categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CategoryQuestion_Question_QuestionsId",
+                        name: "FK_CategoryQuestion_questions_QuestionsId",
                         column: x => x.QuestionsId,
-                        principalTable: "Question",
+                        principalTable: "questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "easyQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_easyQuestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_easyQuestions_questions_Id",
+                        column: x => x.Id,
+                        principalTable: "questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "hardQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_hardQuestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_hardQuestions_questions_Id",
+                        column: x => x.Id,
+                        principalTable: "questions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "midQuestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_midQuestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_midQuestions_questions_Id",
+                        column: x => x.Id,
+                        principalTable: "questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -126,29 +177,29 @@ namespace QuizAPI.Migrations
                 name: "QuestionUser",
                 columns: table => new
                 {
-                    questionsListId = table.Column<int>(type: "int", nullable: false),
-                    usersId = table.Column<int>(type: "int", nullable: false)
+                    QuestionsListId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_QuestionUser", x => new { x.questionsListId, x.usersId });
+                    table.PrimaryKey("PK_QuestionUser", x => new { x.QuestionsListId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_QuestionUser_Question_questionsListId",
-                        column: x => x.questionsListId,
-                        principalTable: "Question",
+                        name: "FK_QuestionUser_questions_QuestionsListId",
+                        column: x => x.QuestionsListId,
+                        principalTable: "questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_QuestionUser_User_usersId",
-                        column: x => x.usersId,
-                        principalTable: "User",
+                        name: "FK_QuestionUser_users_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Answer_QuestionId",
-                table: "Answer",
+                name: "IX_answers_QuestionId",
+                table: "answers",
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
@@ -157,13 +208,13 @@ namespace QuizAPI.Migrations
                 column: "QuestionsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestionUser_usersId",
+                name: "IX_QuestionUser_UsersId",
                 table: "QuestionUser",
-                column: "usersId");
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_CompanyId",
-                table: "User",
+                name: "IX_users_CompanyId",
+                table: "users",
                 column: "CompanyId");
         }
 
@@ -171,25 +222,34 @@ namespace QuizAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Answer");
+                name: "answers");
 
             migrationBuilder.DropTable(
                 name: "CategoryQuestion");
 
             migrationBuilder.DropTable(
+                name: "easyQuestions");
+
+            migrationBuilder.DropTable(
+                name: "hardQuestions");
+
+            migrationBuilder.DropTable(
+                name: "midQuestions");
+
+            migrationBuilder.DropTable(
                 name: "QuestionUser");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "categories");
 
             migrationBuilder.DropTable(
-                name: "Question");
+                name: "questions");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "users");
 
             migrationBuilder.DropTable(
-                name: "Company");
+                name: "companys");
         }
     }
 }

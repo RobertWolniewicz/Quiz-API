@@ -7,6 +7,6 @@
         public DateTime DateOfBirth { get; set; }
         public string EmailAddres { get; set; }
         public string Password { get; set; }
-        public List<Question> QuestionsList { get; set; }
+        public List<Question> QuestionsList { get; set; } = new List<Question>();
     }
 }

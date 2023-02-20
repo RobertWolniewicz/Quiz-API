@@ -47,7 +47,14 @@ namespace Quiz_API.Services
            foreach(var categoryName in newQuestion.Categorys)
             {
                 var Category=_dbContext.categories.FirstOrDefault(c => c.Name == categoryName);
-                if (Category == null) continue;
+                if (Category == null)
+                {
+                    Category = new()
+                    {
+                        Name = categoryName,
+                    };
+                    _dbContext.categories.Add(Category);
+                }
                 createdQuestion.Categorys.Add(Category);
             }
 

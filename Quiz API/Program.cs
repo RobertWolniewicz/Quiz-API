@@ -29,8 +29,17 @@ app.UseHttpsRedirection();
     //=>service.PostResult( user, Answers));
 app.MapPost("/AddQuestion/{T}", (DtoQuestion Question, IQuestionServices service, string T) => 
 {
-    var createMethod = service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType(T));
+    var createMethod = service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T));
     createMethod.Invoke(service, new object[] { Question });
+});
+app.MapPost("AddCategory", (AppDB DB, string Name) =>
+{
+    var newCategory = new Category()
+    {
+        Name = Name
+    };
+    DB.categories.Add(newCategory);
+    DB.SaveChanges();
 });
 
 app.Run();
