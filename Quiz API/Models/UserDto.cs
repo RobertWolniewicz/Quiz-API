@@ -1,14 +1,12 @@
-﻿namespace Quiz_API.Entity
+﻿namespace Quiz_API.Models
 {
-    public abstract class User
+    public class UserDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string EmailAddres { get; set; }
         public string Password { get; set; }
-        public List<Question> QuestionsList { get; set; } = new List<Question>();
         public int RoleId { get; set; }
-        public virtual Role Role { get; set; }
     }
 }

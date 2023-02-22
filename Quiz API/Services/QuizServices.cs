@@ -7,7 +7,7 @@ namespace Quiz_API.Services
     public interface IQuizServices
     {
         List<Question> GetQuiz (QuizParameters parameters, User user);
-        int PostResult( User user, List<AnswersModel> Answers);
+        int PostResult( User user, List<Answer> Answers);
     }
 
     public class QuizServices : IQuizServices
@@ -41,26 +41,16 @@ namespace Quiz_API.Services
 
             return Questions;
         }
-        public int PostResult(User user,  List<AnswersModel> Answers)
+        public int PostResult(User user,  List<Answer> Answers)
         {
             var result = 0;
             foreach(Question question in user.QuestionsList)
             {
-                var questionAnswer = Answers.First(a => a.QuestionId == question.Id);
-                    if(question is EasyQuestion question1)
-                {
-                    if (questionAnswer.EasyAnswer==question1.CorrectAnswer)
+                var questionAnswer = Answers.First(a => a.QuestionId == question.Id); 
+                    if (questionAnswer.Text == question.CorrectAnswer)
                     {
                         result += question.Points;
                     }
-                }
-                    if ((question is HardQuestion)|| (question is MidQuestion))
-                        {
-                    if (questionAnswer.Answer == question.CorrectAnswer)
-                    {
-                        result += question.Points;
-                    }
-                }
             }
             user.QuestionsList.Clear();
             return result;

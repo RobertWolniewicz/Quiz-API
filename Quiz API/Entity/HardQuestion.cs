@@ -2,6 +2,9 @@
 {
     public class HardQuestion : Question
     {
-        public new string CorrectAnswer { get; set; }
+        public HardQuestion()
+        {
+            Points = 3;
+        }
     }
 }

@@ -1,35 +1,49 @@
-﻿using Quiz_API.Entity;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Quiz_API.Entity;
 using Quiz_API.Models;
 
 namespace Quiz_API.Services
 {
     public interface IQuestionServices
     {
-        void Create<T>(DtoQuestion newQuestion) where T : Question, new();
-        void Delete<T>(int id) where T : Question;
-        List<T> GetAll<T>() where T : Question;
-        T GetById<T>(int id) where T : Question;
-        void Update<T>(T updatingQuestion) where T : Question;
+        QuestionDto Create<T>(QuestionDto newQuestion) where T : Question, new ();
+        void Delete(int id);
+        List<QuestionDto> GetAll();
+        QuestionDto GetById(int id);
+        void Update(QuestionDto updatingQuestion);
     }
 
     public class QuestionServices : IQuestionServices
     {
         private readonly AppDB _dbContext;
+        private readonly IMapper _mapper;
 
-        public QuestionServices(AppDB DbContext)
+        public QuestionServices(AppDB DbContext, IMapper mapper)
         {
             _dbContext = DbContext;
+            _mapper = mapper;
         }
-        public List<T> GetAll<T>() where T : Question => _dbContext.Set<T>().ToList();
-        public T GetById<T>(int id) where T : Question => _dbContext.Set<T>().FirstOrDefault(q => q.Id == id);
-        public void Delete<T>(int id) where T : Question
+        public List<QuestionDto> GetAll()
         {
-            _dbContext.Set<T>().Remove(GetById<T>(id));
+            var Questions = _dbContext.questions.Include(q => q.Answers).Include(q => q.Categorys);
+            var QuestionDtos = _mapper.Map<List<QuestionDto>>(Questions);
+            return QuestionDtos;
+        }
+        public QuestionDto GetById(int id) 
+        {
+            var Question = _dbContext.questions.FirstOrDefault(q => q.Id == id);
+            var QuestionDto = _mapper.Map<QuestionDto>(Question);
+            return QuestionDto;
+        }
+        public void Delete(int id) 
+        {
+            _dbContext.questions.Remove(_dbContext.questions.FirstOrDefault(q => q.Id == id));
             _dbContext.SaveChanges();
         }
-        public void Update<T>(T updatingQuestion) where T : Question
+        public void Update(QuestionDto updatingQuestion)
         {
-            var existingQuestion = GetById<T>(updatingQuestion.Id);
+            var existingQuestion = GetById(updatingQuestion.Id);
             if (existingQuestion == null) return;
             existingQuestion.QuestionText = updatingQuestion.QuestionText;
             existingQuestion.CorrectAnswer = updatingQuestion.CorrectAnswer;
@@ -37,45 +51,41 @@ namespace Quiz_API.Services
             existingQuestion.Answers = updatingQuestion.Answers;
             _dbContext.SaveChanges();
         }
-        public void Create<T>(DtoQuestion newQuestion) where T : Question, new()
+        public QuestionDto Create<T>(QuestionDto newQuestion) where T : Question, new()
         {
-            if (newQuestion == null) return;
-            T createdQuestion = new()
+            if(!(_dbContext.Set<T>().FirstOrDefault(q=>q.QuestionText == newQuestion.QuestionText)==null))
             {
-                QuestionText = newQuestion.Text,
+                return null;
+            }
+           T createdQuestion = new()
+            {
+                QuestionText = newQuestion.QuestionText,
             };
-           foreach(var categoryName in newQuestion.Categorys)
+           foreach(var category in newQuestion.Categorys)
             {
-                var Category=_dbContext.categories.FirstOrDefault(c => c.Name == categoryName);
+                var Category=_dbContext.categories.FirstOrDefault(c => c.Name == category.Name);
                 if (Category == null)
                 {
                     Category = new()
                     {
-                        Name = categoryName,
+                        Name = category.Name,
                     };
                     _dbContext.categories.Add(Category);
                 }
                 createdQuestion.Categorys.Add(Category);
             }
-
-            if (createdQuestion is not EasyQuestion)
-            {
                 createdQuestion.CorrectAnswer = newQuestion.CorrectAnswer;
-                _dbContext.Set<T>().Add(createdQuestion);
                 foreach (var answer in newQuestion.Answers)
                 {
                     var newAnswer = new Answer()
                     {
-                        Text = answer
+                        Text = answer.Text
                     };
                     createdQuestion.Answers.Add(newAnswer);
                 }
-            }
-            else
-            {
-                createdQuestion.CorrectAnswer = (bool)newQuestion.EasyAnswer;
-            }
+                _dbContext.questions.Add(createdQuestion);
                 _dbContext.SaveChanges();
+            return  _mapper.Map<QuestionDto>(createdQuestion);
         }
     }
 }

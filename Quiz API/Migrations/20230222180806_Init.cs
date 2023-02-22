@@ -31,7 +31,7 @@ namespace QuizAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    solvedQuizs = table.Column<int>(type: "int", nullable: false)
+                    EmailAddres = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,7 +45,9 @@ namespace QuizAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Points = table.Column<int>(type: "int", nullable: false, defaultValue: 3)
+                    Points = table.Column<int>(type: "int", nullable: false, defaultValue: 3),
+                    CorrectAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,8 +65,7 @@ namespace QuizAPI.Migrations
                     EmailAddres = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: true),
-                    SolvedQuizs = table.Column<int>(type: "int", nullable: true)
+                    CompanyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -84,8 +85,7 @@ namespace QuizAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    QuestionId = table.Column<int>(type: "int", nullable: false),
-                    IsCorrect = table.Column<bool>(type: "bit", nullable: false)
+                    QuestionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,57 +117,6 @@ namespace QuizAPI.Migrations
                     table.ForeignKey(
                         name: "FK_CategoryQuestion_questions_QuestionsId",
                         column: x => x.QuestionsId,
-                        principalTable: "questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "easyQuestions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_easyQuestions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_easyQuestions_questions_Id",
-                        column: x => x.Id,
-                        principalTable: "questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "hardQuestions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_hardQuestions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_hardQuestions_questions_Id",
-                        column: x => x.Id,
-                        principalTable: "questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "midQuestions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_midQuestions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_midQuestions_questions_Id",
-                        column: x => x.Id,
                         principalTable: "questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -226,15 +175,6 @@ namespace QuizAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "CategoryQuestion");
-
-            migrationBuilder.DropTable(
-                name: "easyQuestions");
-
-            migrationBuilder.DropTable(
-                name: "hardQuestions");
-
-            migrationBuilder.DropTable(
-                name: "midQuestions");
 
             migrationBuilder.DropTable(
                 name: "QuestionUser");

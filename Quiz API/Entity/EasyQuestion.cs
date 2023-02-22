@@ -2,6 +2,9 @@
 {
     public class EasyQuestion : Question
     {
-        public new bool CorrectAnswer { get; set; }
+        public EasyQuestion()
+        {
+            Points = 1;
+        }
     }
 }

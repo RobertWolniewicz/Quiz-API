@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int solvedQuizs { get; set; }
+        public string EmailAddres { get; set; }
         public List<CompanyUser> Users { get; set; } = new List<CompanyUser>();
 
     }

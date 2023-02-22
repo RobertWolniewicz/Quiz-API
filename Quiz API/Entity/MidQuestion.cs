@@ -2,6 +2,9 @@
 {
     public class MidQuestion : Question
     {
-        public new string CorrectAnswer { get; set; }
+        public MidQuestion()
+        {
+            Points = 2;
+        }
     }
 }

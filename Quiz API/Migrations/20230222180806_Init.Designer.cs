@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Quiz_API.Entity;
 
@@ -11,9 +12,11 @@ using Quiz_API.Entity;
 namespace QuizAPI.Migrations
 {
     [DbContext(typeof(AppDB))]
-    partial class AppDBModelSnapshot : ModelSnapshot
+    [Migration("20230222180806_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,7 +132,9 @@ namespace QuizAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Points")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(3);
 
                     b.Property<string>("QuestionText")
                         .IsRequired()

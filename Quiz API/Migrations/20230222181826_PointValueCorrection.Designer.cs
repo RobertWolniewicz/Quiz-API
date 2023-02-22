@@ -12,8 +12,8 @@ using Quiz_API.Entity;
 namespace QuizAPI.Migrations
 {
     [DbContext(typeof(AppDB))]
-    [Migration("20230220210143_Init")]
-    partial class Init
+    [Migration("20230222181826_PointValueCorrection")]
+    partial class PointValueCorrection
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,9 +63,6 @@ namespace QuizAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsCorrect")
-                        .HasColumnType("bit");
-
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
@@ -105,12 +102,13 @@ namespace QuizAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("EmailAddres")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("solvedQuizs")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -125,6 +123,14 @@ namespace QuizAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CorrectAnswer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Points")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -138,7 +144,9 @@ namespace QuizAPI.Migrations
 
                     b.ToTable("questions");
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Question");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Quiz_API.Entity.User", b =>
@@ -181,21 +189,21 @@ namespace QuizAPI.Migrations
                 {
                     b.HasBaseType("Quiz_API.Entity.Question");
 
-                    b.ToTable("easyQuestions", (string)null);
+                    b.HasDiscriminator().HasValue("EasyQuestion");
                 });
 
             modelBuilder.Entity("Quiz_API.Entity.HardQuestion", b =>
                 {
                     b.HasBaseType("Quiz_API.Entity.Question");
 
-                    b.ToTable("hardQuestions", (string)null);
+                    b.HasDiscriminator().HasValue("HardQuestion");
                 });
 
             modelBuilder.Entity("Quiz_API.Entity.MidQuestion", b =>
                 {
                     b.HasBaseType("Quiz_API.Entity.Question");
 
-                    b.ToTable("midQuestions", (string)null);
+                    b.HasDiscriminator().HasValue("MidQuestion");
                 });
 
             modelBuilder.Entity("Quiz_API.Entity.CompanyUser", b =>
@@ -213,9 +221,6 @@ namespace QuizAPI.Migrations
             modelBuilder.Entity("Quiz_API.Entity.PrivateUser", b =>
                 {
                     b.HasBaseType("Quiz_API.Entity.User");
-
-                    b.Property<int>("SolvedQuizs")
-                        .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("PrivateUser");
                 });
@@ -259,33 +264,6 @@ namespace QuizAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("Quiz_API.Entity.EasyQuestion", b =>
-                {
-                    b.HasOne("Quiz_API.Entity.Question", null)
-                        .WithOne()
-                        .HasForeignKey("Quiz_API.Entity.EasyQuestion", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Quiz_API.Entity.HardQuestion", b =>
-                {
-                    b.HasOne("Quiz_API.Entity.Question", null)
-                        .WithOne()
-                        .HasForeignKey("Quiz_API.Entity.HardQuestion", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Quiz_API.Entity.MidQuestion", b =>
-                {
-                    b.HasOne("Quiz_API.Entity.Question", null)
-                        .WithOne()
-                        .HasForeignKey("Quiz_API.Entity.MidQuestion", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Quiz_API.Entity.CompanyUser", b =>

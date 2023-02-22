@@ -17,6 +17,7 @@ namespace Quiz_API.Entity
         public DbSet<Category> categories { get; set; }
         public DbSet<Question> questions { get; set; }
         public DbSet<User> users { get; set; }
+        public DbSet<Role> roles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,23 +40,6 @@ namespace Quiz_API.Entity
             });
             modelBuilder.Entity<User>(eb =>
             {
-                eb.HasMany(u => u.QuestionsList)
-                .WithMany(q => q.Users);
-            });
-            modelBuilder.Entity<EasyQuestion>(eb =>
-            {
-                eb.Property(u => u.Points).HasDefaultValue(1);
-                eb.ToTable("easyQuestions");
-            });
-            modelBuilder.Entity<MidQuestion>(eb =>
-            {
-                eb.Property(u => u.Points).HasDefaultValue(2);
-                eb.ToTable("midQuestions");
-            });
-            modelBuilder.Entity<HardQuestion>(eb =>
-            {
-                eb.Property(u => u.Points).HasDefaultValue(3);
-                eb.ToTable("hardQuestions");
             });
         }
         
