@@ -3,6 +3,7 @@ using Quiz_API.Entity;
 using Quiz_API.Models;
 using Quiz_API.Services;
 using Quiz_API.Validators;
+using System.Reflection;
 
 namespace Quiz_API.Requests
 {
@@ -39,43 +40,44 @@ namespace Quiz_API.Requests
 
             return app;
         }
-        public static IResult GetAll(IQuestionServices service)
+        public static async Task<IResult> GetAll(IQuestionServices service)
         {
-            return Results.Ok(service.GetAll());
+            return Results.Ok(await service.GetAll());
         }
-        public static IResult GetById(IQuestionServices service, int Id)
+        public static async Task<IResult> GetById(IQuestionServices service, int Id)
         {
-            var result = service.GetById(Id);
+            var result = await service.GetById(Id);
             if (result == null)
             {
                 return Results.NotFound();
             }
             return Results.Ok(result);
         }
-        public static IResult Delete(IQuestionServices service, int Id)
+        public static async Task<IResult> Delete(IQuestionServices service, int Id)
         {
-            var result = service.GetById(Id);
+            var result = await service.GetById(Id);
             if (result == null)
             {
                 return Results.NotFound();
             }
-            service.Delete(Id);
+            await service.Delete(Id);
             return Results.NoContent();
         }
-        public static IResult Update(IQuestionServices service, QuestionDto UpdateData)
+        public static async Task<IResult> Update(IQuestionServices service, QuestionDto UpdateData)
         {
-            var result = service.GetById(UpdateData.Id);
+            var result = await service.GetById(UpdateData.Id);
             if (result == null)
             {
                 return Results.NotFound();
             }
-            service.Update(UpdateData);
+           await service.Update(UpdateData);
             return Results.NoContent();
         }
-        public static IResult Create(IQuestionServices service, QuestionDto newQuestion, string T)
+        public static async Task<IResult> Create(IQuestionServices service, QuestionDto newQuestion, string T)
         {
-            var NewQuestion = (QuestionDto)service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T))
-                                .Invoke(service, new object[] { newQuestion });
+            MethodInfo method = service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T));
+            var NewQuestion = await (Task<QuestionDto>)method.Invoke(service, new object[] { newQuestion });
+
             return Results.Created($"/Question/{NewQuestion.Id}", NewQuestion);
         }
     }

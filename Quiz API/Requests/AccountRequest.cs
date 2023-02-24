@@ -1,6 +1,7 @@
 ﻿using Quiz_API.Models;
 using Quiz_API.Services;
 using Quiz_API.Validators;
+using System.Reflection;
 
 namespace Quiz_API.Requests
 {
@@ -21,16 +22,20 @@ namespace Quiz_API.Requests
                 .Accepts<LoginDto>("application/json");
             return app;
         }
-        public static IResult Register(IAccountServices service, RegisterUserDto newUserDto, string T)
+        public static async Task<IResult> Register(IAccountServices service, RegisterUserDto newUserDto, string T)
         {
-            service.GetType().GetMethod("RegisterUser").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T))
-                                .Invoke(service, new object[] { newUserDto });
+            MethodInfo method = service.GetType().GetMethod("RegisterUser").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T));
+            await (Task)method.Invoke(service, new object[] { newUserDto });
             return Results.Ok();
         }
-        public static IResult Login(IAccountServices service, LoginDto dto)
+        public static async Task<IResult> Login(IAccountServices service, LoginDto dto)
         {
-            var token = service.GenereteJwt(dto, _app);
+            var token = await service.GenereteJwt(dto, _app);
             return Results.Ok(token);
+        }
+        public static async Task Delete(IAccountServices service, int Id)
+        {
+            var user =
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Quiz_API.Entity;
 using Quiz_API.Models;
 
@@ -6,11 +7,11 @@ namespace Quiz_API.Services
 {
     public interface ICategoryServices
     {
-        CategoryDto Create(CategoryDto categoryModel);
-        void Delete(int id);
-        List<CategoryDto> GetAll();
-        CategoryDto GetById(int id);
-        void Update(CategoryDto updatingData);
+        Task<CategoryDto> Create(CategoryDto categoryModel);
+        Task Delete(int id);
+        Task<List<CategoryDto>> GetAll();
+        Task<CategoryDto> GetById(int id);
+        Task Update(CategoryDto updatingData);
     }
 
     public class CategoryServices : ICategoryServices
@@ -18,43 +19,38 @@ namespace Quiz_API.Services
         private readonly AppDB _dbContext;
         private readonly IMapper _mapper;
 
-        public CategoryServices(AppDB DbContext, IMapper mapper)
+        public async Task<List<CategoryDto>> GetAll()
         {
-            _dbContext = DbContext;
-            _mapper = mapper;
-        }
-        public List<CategoryDto> GetAll()
-        {
-            var categorys = _dbContext.categories.ToList();
+            var categorys = await _dbContext.categories.ToListAsync();
             var categotysDtos = _mapper.Map<List<CategoryDto>>(categorys);
             return categotysDtos;
         }
-        public CategoryDto GetById(int id)
+        public async Task<CategoryDto> GetById(int id)
         {
-            var category = _dbContext.categories.FirstOrDefault(c => c.Id == id);
+            var category =await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == id);
             var categotysDto = _mapper.Map<CategoryDto>(category);
             return categotysDto;
         }
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            _dbContext.categories.Remove(_dbContext.categories.FirstOrDefault(c => c.Id == id));
-            _dbContext.SaveChanges();
+            _dbContext.categories.Remove(await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == id));
+            _dbContext.SaveChangesAsync();
         }
-        public CategoryDto Create(CategoryDto categoryModel)
+        public async Task<CategoryDto> Create(CategoryDto categoryModel)
         {
             var newCategory = new Category()
             {
                 Name = categoryModel.Name,
             };
             _dbContext.categories.Add(newCategory);
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
             return _mapper.Map<CategoryDto>(newCategory);
         }
-        public void Update(CategoryDto updatingData)
+        public async Task Update(CategoryDto updatingData)
         {
-            var updatingCategory = _dbContext.categories.FirstOrDefault(c => c.Id == updatingData.Id);
+            var updatingCategory = await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == updatingData.Id);
             updatingCategory.Name = updatingData.Name;
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
         }
     }
 }

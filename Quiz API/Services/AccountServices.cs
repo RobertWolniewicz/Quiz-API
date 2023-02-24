@@ -12,7 +12,7 @@ namespace Quiz_API.Services
     public interface IAccountServices
     {
         void RegisterUser<T>(RegisterUserDto dto) where T : User, new();
-        string GenereteJwt(LoginDto dto, WebApplication builder);
+        Task<string> GenereteJwt(LoginDto dto, WebApplication builder);
     }
 
     public class AccountServices : IAccountServices
@@ -24,7 +24,7 @@ namespace Quiz_API.Services
             _passwordHasher = passwordHasher;
             _dbContext = DbContext;
         }
-        public void RegisterUser<T>(RegisterUserDto dto) where T : User, new()
+        public async void RegisterUser<T>(RegisterUserDto dto) where T : User, new()
         {
             T newUser = new()
             {
@@ -37,7 +37,7 @@ namespace Quiz_API.Services
             newUser.Password = hashedpassword;
             if (typeof(T) == typeof(CompanyUser))
             {
-                var company = _dbContext.companys.FirstOrDefault(c => c.Name == dto.Company.Name);
+                var company = await _dbContext.companys.FirstOrDefaultAsync(c => c.Name == dto.Company.Name);
                 if (company == null)
                 {
                     var newCompany = new Company()
@@ -56,11 +56,11 @@ namespace Quiz_API.Services
             {
                 _dbContext.users.Add(newUser);
             }
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
         }
-        public string GenereteJwt(LoginDto dto, WebApplication builder)
+        public async Task<string> GenereteJwt(LoginDto dto, WebApplication builder)
         {
-            var user = _dbContext.users.Include(u=>u.Role).FirstOrDefault(u => u.EmailAddres == dto.Email);
+            var user = await _dbContext.users.Include(u=>u.Role).FirstOrDefaultAsync(u => u.EmailAddres == dto.Email);
             if (user == null)
             {
                 throw new BadHttpRequestException("Invalid username or password");

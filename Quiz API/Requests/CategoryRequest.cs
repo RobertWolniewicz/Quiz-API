@@ -39,42 +39,42 @@ public static class CategoryRequest
 
         return app;
     }
-    public static IResult GetAll(ICategoryServices service)
+    public static async  Task<IResult> GetAll(ICategoryServices service)
     {
-        return Results.Ok(service.GetAll());
+        return Results.Ok(await service.GetAll());
     }
-    public static IResult GetById(ICategoryServices service, int Id)
+    public static async Task<IResult> GetById(ICategoryServices service, int Id)
     {
-        var result = service.GetById(Id);
+        var result = await service.GetById(Id);
         if(result == null)
         {
             return Results.NotFound();
         }
         return Results.Ok(result);
     }
-    public static IResult Create(ICategoryServices service, CategoryDto newCategory)
+    public static async Task<IResult> Create(ICategoryServices service, CategoryDto newCategory)
     {
-        var NewCategory = service.Create(newCategory);
+        var NewCategory = await service.Create(newCategory);
         return Results.Created($"/Category/{NewCategory.Id}",NewCategory);
     }
-    public static IResult Update(ICategoryServices service, CategoryDto UpdateData)
+    public static async Task<IResult> Update(ICategoryServices service, CategoryDto UpdateData)
     {
-        var result = service.GetById(UpdateData.Id);
+        var result = await service.GetById(UpdateData.Id);
         if (result == null)
         {
             return Results.NotFound();
         }
-        service.Update(UpdateData);
+        await service.Update(UpdateData);
         return Results.NoContent();
     }
-    public static IResult Delete(ICategoryServices service, int Id)
+    public static async Task<IResult> Delete(ICategoryServices service, int Id)
     {
-        var result = service.GetById(Id);
+        var result = await service.GetById(Id);
         if (result == null)
         {
             return Results.NotFound();
         }
-        service.Delete(Id);
+       await service.Delete(Id);
         return Results.NoContent();
     }
 }

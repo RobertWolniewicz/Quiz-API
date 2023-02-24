@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Quiz_API;
 using Quiz_API.Entity;
+using Quiz_API.Middleware;
 using Quiz_API.Models;
 using Quiz_API.Requests;
 using Quiz_API.Services;
@@ -27,6 +28,7 @@ builder.Services.AddScoped<IAccountServices, AccountServices>();
 builder.Services.AddScoped<IQuizServices, QuizServices>();
 builder.Services.AddScoped<IQuestionServices, QuestionServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(cfg =>
     {
@@ -43,6 +45,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 var app = builder.Build();
 
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 
