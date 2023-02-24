@@ -42,7 +42,6 @@ namespace Quiz_API.Services
         }
         public CategoryDto Create(CategoryDto categoryModel)
         {
-            if (!(_dbContext.categories.FirstOrDefault(c=>c.Name== categoryModel.Name) ==null)) return null;
             var newCategory = new Category()
             {
                 Name = categoryModel.Name,

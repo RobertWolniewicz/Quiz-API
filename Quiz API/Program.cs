@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,16 +17,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(CategoryValidator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(QuestionValidator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(AccountValidator));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddDbContext<AppDB>(
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("QuizConnectionString"))
         );
+builder.Services.AddScoped<IAccountServices, AccountServices>();
 builder.Services.AddScoped<IQuizServices, QuizServices>();
 builder.Services.AddScoped<IQuestionServices, QuestionServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(cfg =>
     {
+        cfg.RequireHttpsMetadata = false;
+        cfg.SaveToken = true;
         cfg.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             ValidIssuer = builder.Configuration["JwtIssuer"],
@@ -34,6 +40,7 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 builder.Services.AddAuthorization();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 var app = builder.Build();
 
 app.UseAuthentication();
@@ -48,6 +55,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.ReqisterCategoryEndpoints();
 app.ReqisterQuestionEndpoints();
+app.ReqisterAccountEndpoints();
 
 //app.MapGet("/Quiz", (IQuizServices service, [FromBody] QuizParameters param, [FromHeader]User user)
 // => service.GetQuiz( param, user));

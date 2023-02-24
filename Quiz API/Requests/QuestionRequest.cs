@@ -76,10 +76,6 @@ namespace Quiz_API.Requests
         {
             var NewQuestion = (QuestionDto)service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T))
                                 .Invoke(service, new object[] { newQuestion });
-            if (NewQuestion == null)
-            {
-                return Results.BadRequest("This category already exists");
-            }
             return Results.Created($"/Question/{NewQuestion.Id}", NewQuestion);
         }
     }

@@ -55,11 +55,6 @@ public static class CategoryRequest
     public static IResult Create(ICategoryServices service, CategoryDto newCategory)
     {
         var NewCategory = service.Create(newCategory);
-        if(NewCategory==null)
-        {
-            return Results.BadRequest("This category already exists");
-        }
-
         return Results.Created($"/Category/{NewCategory.Id}",NewCategory);
     }
     public static IResult Update(ICategoryServices service, CategoryDto UpdateData)

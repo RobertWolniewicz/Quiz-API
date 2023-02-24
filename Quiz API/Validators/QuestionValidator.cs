@@ -1,13 +1,22 @@
 ﻿using FluentValidation;
+using Quiz_API.Entity;
 using Quiz_API.Models;
 
 namespace Quiz_API.Validators
 {
     public class QuestionValidator : AbstractValidator<QuestionDto>
     {
-        public QuestionValidator()
+        public QuestionValidator(AppDB DbContext)
         {
-            RuleFor(c => c.QuestionText ).NotEmpty();
+            RuleFor(c => c.QuestionText ).NotEmpty()
+                .Custom((value, context) =>
+                {
+                    var exist = DbContext.questions.Any(q => q.QuestionText == value);
+                    if (exist)
+                    {
+                        context.AddFailure("QuestionText", "That cquestion exist");
+                    }
+                });
             RuleFor(c => c.CorrectAnswer).NotEmpty();
             RuleFor(c => c.Categorys).NotEmpty();
         }

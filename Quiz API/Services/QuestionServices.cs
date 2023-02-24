@@ -53,10 +53,6 @@ namespace Quiz_API.Services
         }
         public QuestionDto Create<T>(QuestionDto newQuestion) where T : Question, new()
         {
-            if(!(_dbContext.Set<T>().FirstOrDefault(q=>q.QuestionText == newQuestion.QuestionText)==null))
-            {
-                return null;
-            }
            T createdQuestion = new()
             {
                 QuestionText = newQuestion.QuestionText,

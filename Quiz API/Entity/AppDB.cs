@@ -40,7 +40,12 @@ namespace Quiz_API.Entity
             });
             modelBuilder.Entity<User>(eb =>
             {
+                eb.HasMany(U => U.QuestionsList)
+               .WithMany(Q => Q.Users);
             });
+            modelBuilder.Entity<Role>().HasData(
+                new Role() {Id=1, Name = "User"}, 
+                new Role() { Id = 2, Name = "Admin" });
         }
         
     }
