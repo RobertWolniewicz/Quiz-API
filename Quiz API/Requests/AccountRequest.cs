@@ -20,6 +20,11 @@ namespace Quiz_API.Requests
                 .Produces<string>(StatusCodes.Status200OK)
                 .WithTags("Account")
                 .Accepts<LoginDto>("application/json");
+            app.MapDelete("Login", AccountRequest.Delete)
+               .Produces(StatusCodes.Status204NoContent)
+               .Produces(StatusCodes.Status404NotFound)
+               .WithTags("Account");
+
             return app;
         }
         public static async Task<IResult> Register(IAccountServices service, RegisterUserDto newUserDto, string T)
@@ -33,9 +38,10 @@ namespace Quiz_API.Requests
             var token = await service.GenereteJwt(dto, _app);
             return Results.Ok(token);
         }
-        public static async Task Delete(IAccountServices service, int Id)
+        public static async Task<IResult> Delete(IAccountServices service, int Id)
         {
-            var user =
+            await service.Delete(Id);
+            return Results.NoContent();
         }
     }
 }

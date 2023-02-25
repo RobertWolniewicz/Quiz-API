@@ -33,27 +33,19 @@ namespace Quiz_API.Services
         }
         public async Task<QuestionDto> GetById(int id) 
         {
-            var Question = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id == id);
-            if(Question == null)
-            {
-                throw new NotFoundException("Question not found");
-            }
+            var Question = await FindById(id);
             var QuestionDto = _mapper.Map<QuestionDto>(Question);
             return QuestionDto;
         }
         public async Task Delete(int id) 
         {
-            var Question = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id == id);
-            if (Question == null)
-            {
-                throw new NotFoundException("Question not found");
-            }
+            var Question = await FindById(id);
             _dbContext.questions.Remove(Question);
             _dbContext.SaveChangesAsync();
         }
         public async Task Update(QuestionDto updatingQuestion)
         {
-            var existingQuestion = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id == updatingQuestion.Id);
+            var existingQuestion = await FindById(updatingQuestion.Id);
             if (existingQuestion == null)
             {
                 throw new NotFoundException("Question not found");
@@ -114,6 +106,15 @@ namespace Quiz_API.Services
                 _dbContext.questions.Add(createdQuestion);
                 _dbContext.SaveChangesAsync();
             return  _mapper.Map<QuestionDto>(createdQuestion);
+        }
+        async Task<Question> FindById(int Id)
+        {
+            var result = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id == Id);
+            if (result == null)
+            {
+                throw new NotFoundException("Question not found");
+            }
+            return result;
         }
     }
 }

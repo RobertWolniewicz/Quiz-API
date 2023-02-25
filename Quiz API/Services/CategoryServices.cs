@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Quiz_API.Entity;
+using Quiz_API.Exceptions;
 using Quiz_API.Models;
 
 namespace Quiz_API.Services
@@ -27,13 +28,14 @@ namespace Quiz_API.Services
         }
         public async Task<CategoryDto> GetById(int id)
         {
-            var category =await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == id);
+            var category =await FindById(id);
             var categotysDto = _mapper.Map<CategoryDto>(category);
             return categotysDto;
         }
         public async Task Delete(int id)
         {
-            _dbContext.categories.Remove(await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == id));
+            var category = await FindById(id);
+            _dbContext.categories.Remove(category);
             _dbContext.SaveChangesAsync();
         }
         public async Task<CategoryDto> Create(CategoryDto categoryModel)
@@ -48,9 +50,18 @@ namespace Quiz_API.Services
         }
         public async Task Update(CategoryDto updatingData)
         {
-            var updatingCategory = await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == updatingData.Id);
+            var updatingCategory = await FindById(updatingData.Id);
             updatingCategory.Name = updatingData.Name;
             _dbContext.SaveChangesAsync();
+        }
+        async Task<Category> FindById(int Id)
+        {
+           var  result = await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == Id);
+           if (result == null)
+           {
+              throw new NotFoundException("Question not found");
+           }
+           return result;
         }
     }
 }

@@ -46,10 +46,6 @@ public static class CategoryRequest
     public static async Task<IResult> GetById(ICategoryServices service, int Id)
     {
         var result = await service.GetById(Id);
-        if(result == null)
-        {
-            return Results.NotFound();
-        }
         return Results.Ok(result);
     }
     public static async Task<IResult> Create(ICategoryServices service, CategoryDto newCategory)
@@ -59,21 +55,11 @@ public static class CategoryRequest
     }
     public static async Task<IResult> Update(ICategoryServices service, CategoryDto UpdateData)
     {
-        var result = await service.GetById(UpdateData.Id);
-        if (result == null)
-        {
-            return Results.NotFound();
-        }
         await service.Update(UpdateData);
         return Results.NoContent();
     }
     public static async Task<IResult> Delete(ICategoryServices service, int Id)
     {
-        var result = await service.GetById(Id);
-        if (result == null)
-        {
-            return Results.NotFound();
-        }
        await service.Delete(Id);
         return Results.NoContent();
     }

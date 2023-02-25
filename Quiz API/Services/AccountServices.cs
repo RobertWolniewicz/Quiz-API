@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Quiz_API.Entity;
+using Quiz_API.Exceptions;
 using Quiz_API.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,6 +14,7 @@ namespace Quiz_API.Services
     {
         void RegisterUser<T>(RegisterUserDto dto) where T : User, new();
         Task<string> GenereteJwt(LoginDto dto, WebApplication builder);
+        Task Delete(int id);
     }
 
     public class AccountServices : IAccountServices
@@ -90,6 +92,16 @@ namespace Quiz_API.Services
                 );
             var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
             return jwtToken;
+        }
+        public async Task Delete(int id)
+        {
+            var user = await _dbContext.users.FirstOrDefaultAsync(u => u.Id == id);
+            if(user==null)
+            {
+                throw new NotFoundException("User not found");
+            }
+            _dbContext.users.Remove(user);
+            _dbContext.SaveChangesAsync();
         }
     }
 }
