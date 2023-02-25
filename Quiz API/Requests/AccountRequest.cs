@@ -8,9 +8,11 @@ namespace Quiz_API.Requests
     public static class AccountRequest
     {
         private static WebApplication _app;
-        public static WebApplication ReqisterAccountEndpoints(this WebApplication app)
+        private static IUserContextServices _userContextServices;
+        public static WebApplication ReqisterAccountEndpoints(this WebApplication app, IUserContextServices userContextServices)
         {
             _app = app;
+            _userContextServices = userContextServices;
             app.MapPost("Register", AccountRequest.Register)
                 .Produces(StatusCodes.Status200OK)
                 .WithTags("Account")
@@ -23,6 +25,7 @@ namespace Quiz_API.Requests
             app.MapDelete("Login", AccountRequest.Delete)
                .Produces(StatusCodes.Status204NoContent)
                .Produces(StatusCodes.Status404NotFound)
+               .Produces(StatusCodes.Status403Forbidden)
                .WithTags("Account");
 
             return app;
@@ -40,6 +43,10 @@ namespace Quiz_API.Requests
         }
         public static async Task<IResult> Delete(IAccountServices service, int Id)
         {
+            if (!(Id == _userContextServices.GetUserid))
+            {
+                return Results.Forbid();
+            }
             await service.Delete(Id);
             return Results.NoContent();
         }

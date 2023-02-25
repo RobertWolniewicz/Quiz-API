@@ -29,6 +29,8 @@ builder.Services.AddScoped<IQuizServices, QuizServices>();
 builder.Services.AddScoped<IQuestionServices, QuestionServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddScoped<IUserContextServices, UserContextServices>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(cfg =>
     {

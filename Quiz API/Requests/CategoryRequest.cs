@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Quiz_API.Entity;
 using Quiz_API.Models;
 using Quiz_API.Services;
@@ -43,21 +44,25 @@ public static class CategoryRequest
     {
         return Results.Ok(await service.GetAll());
     }
+    [Authorize(Roles = "Admin")]
     public static async Task<IResult> GetById(ICategoryServices service, int Id)
     {
         var result = await service.GetById(Id);
         return Results.Ok(result);
     }
+    [Authorize(Roles = "Admin")]
     public static async Task<IResult> Create(ICategoryServices service, CategoryDto newCategory)
     {
         var NewCategory = await service.Create(newCategory);
         return Results.Created($"/Category/{NewCategory.Id}",NewCategory);
     }
+    [Authorize(Roles = "Admin")]
     public static async Task<IResult> Update(ICategoryServices service, CategoryDto UpdateData)
     {
         await service.Update(UpdateData);
         return Results.NoContent();
     }
+    [Authorize(Roles = "Admin")]
     public static async Task<IResult> Delete(ICategoryServices service, int Id)
     {
        await service.Delete(Id);

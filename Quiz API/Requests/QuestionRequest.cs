@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Quiz_API.Entity;
 using Quiz_API.Models;
 using Quiz_API.Services;
@@ -49,16 +50,19 @@ namespace Quiz_API.Requests
             var result = await service.GetById(Id);
             return Results.Ok(result);
         }
+        [Authorize(Roles = "Admin")]
         public static async Task<IResult> Delete(IQuestionServices service, int Id)
         {
             await service.Delete(Id);
             return Results.NoContent();
         }
+        [Authorize(Roles = "Admin")]
         public static async Task<IResult> Update(IQuestionServices service, QuestionDto UpdateData)
         {
            await service.Update(UpdateData);
            return Results.NoContent();
         }
+        [Authorize(Roles ="Admin")]
         public static async Task<IResult> Create(IQuestionServices service, QuestionDto newQuestion, string T)
         {
             MethodInfo method = service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T));
