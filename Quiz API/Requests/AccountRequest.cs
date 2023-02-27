@@ -1,4 +1,5 @@
-﻿using Quiz_API.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Quiz_API.Models;
 using Quiz_API.Services;
 using Quiz_API.Validators;
 using System.Reflection;
@@ -8,11 +9,9 @@ namespace Quiz_API.Requests
     public static class AccountRequest
     {
         private static WebApplication _app;
-        private static IUserContextServices _userContextServices;
-        public static WebApplication ReqisterAccountEndpoints(this WebApplication app, IUserContextServices userContextServices)
+        public static WebApplication ReqisterAccountEndpoints(this WebApplication app)
         {
             _app = app;
-            _userContextServices = userContextServices;
             app.MapPost("Register", AccountRequest.Register)
                 .Produces(StatusCodes.Status200OK)
                 .WithTags("Account")
@@ -41,9 +40,10 @@ namespace Quiz_API.Requests
             var token = await service.GenereteJwt(dto, _app);
             return Results.Ok(token);
         }
-        public static async Task<IResult> Delete(IAccountServices service, int Id)
+        [Authorize]
+        public static async Task<IResult> Delete(IAccountServices service, int Id, IUserContextServices userContextServices)
         {
-            if (!(Id == _userContextServices.GetUserid))
+            if (!(Id == userContextServices.GetUserId))
             {
                 return Results.Forbid();
             }

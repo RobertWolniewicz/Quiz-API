@@ -4,7 +4,7 @@ namespace Quiz_API.Services
 {
     public interface IUserContextServices
     {
-        int? GetUserid { get; }
+        int? GetUserId { get; }
         ClaimsPrincipal User { get; }
     }
 
@@ -18,7 +18,7 @@ namespace Quiz_API.Services
         }
         public ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
 
-        public int? GetUserid =>
+        public int? GetUserId =>
             User is null ? null : (int?)int.Parse(User.FindFirst(C => C.Type == ClaimTypes.NameIdentifier).Value);
     }
 }

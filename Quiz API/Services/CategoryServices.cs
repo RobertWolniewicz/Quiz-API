@@ -19,7 +19,11 @@ namespace Quiz_API.Services
     {
         private readonly AppDB _dbContext;
         private readonly IMapper _mapper;
-
+        public CategoryServices(AppDB DbContext, IMapper mapper)
+        {
+            _dbContext = DbContext;
+            _mapper = mapper;
+        }
         public async Task<List<CategoryDto>> GetAll()
         {
             var categorys = await _dbContext.categories.ToListAsync();

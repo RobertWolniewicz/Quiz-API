@@ -61,9 +61,6 @@ app.UseHttpsRedirection();
 app.ReqisterCategoryEndpoints();
 app.ReqisterQuestionEndpoints();
 app.ReqisterAccountEndpoints();
+app.ReqisterQuizEndpoints();
 
-//app.MapGet("/Quiz", (IQuizServices service, [FromBody] QuizParameters param, [FromHeader]User user)
-// => service.GetQuiz( param, user));
-//app.MapPost("/Quiz",(IQuizServices service, User user, List<AnswersModel> Answers) 
-//=>service.PostResult( user, Answers));
 app.Run();

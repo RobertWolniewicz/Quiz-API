@@ -1,53 +1,67 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Quiz_API.Entity;
+using Quiz_API.Exceptions;
 using Quiz_API.Models;
 
 namespace Quiz_API.Services
 {
     public interface IQuizServices
     {
-        List<Question> GetQuiz (QuizParameters parameters, User user);
-        int PostResult( User user, List<Answer> Answers);
+        Task<List<QuizQuestion>> GetQuiz (QuizParameters parameters);
+        Task<int> PostResult(List<AnswerDto> Answers);
+        Task<List<QuizQuestion>> GetUserQuiz();
     }
 
     public class QuizServices : IQuizServices
     {
         private readonly AppDB _dbContext;
-        public QuizServices(AppDB DbContext)
+        private readonly IUserContextServices _userContextServices;
+        private readonly IMapper _mapper;
+
+        public QuizServices(AppDB DbContext, IUserContextServices userContextServices, IMapper mapper)
         {
             _dbContext = DbContext;
+            _userContextServices = userContextServices;
+            _mapper = mapper;
         }
-        public List<Question> GetQuiz(QuizParameters parameters, User user)
+        public async Task<List<QuizQuestion>> GetQuiz(QuizParameters parameters)
         {
-            var Questions = new List<Question>();
-            var easyQuestions = GetQuestions<EasyQuestion>(parameters.Category, parameters.NumberOfEasyQuestions);
-            var midQuestions = GetQuestions<MidQuestion>(parameters.Category, parameters.NumberOfMidQuestions);
-            var hardQuestions = GetQuestions<HardQuestion>(parameters.Category, parameters.NumberOfHardQuestions);
+            var user = await _dbContext.users.FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
+            var Questions = new List<QuizQuestion>();
+            var easyQuestions = await GetQuestions<EasyQuestion>(parameters.Category, parameters.NumberOfEasyQuestions);
+            var midQuestions = await GetQuestions<MidQuestion>(parameters.Category, parameters.NumberOfMidQuestions);
+            var hardQuestions = await GetQuestions<HardQuestion>(parameters.Category, parameters.NumberOfHardQuestions);
             foreach (Question question in easyQuestions)
             {
-                Questions.Add(question);
+                var quizQuestion=  _mapper.Map<QuizQuestion>(question);
+                Questions.Add(quizQuestion);
                 user.QuestionsList.Add (question);
             }
             foreach (Question question in midQuestions)
             {
-                Questions.Add(question);
+                var quizQuestion = _mapper.Map<QuizQuestion>(question);
+                Questions.Add(quizQuestion);
                 user.QuestionsList.Add(question);
             }
             foreach (Question question in hardQuestions)
             {
-                Questions.Add(question);
+                var quizQuestion = _mapper.Map<QuizQuestion>(question);
+                Questions.Add(quizQuestion);
                 user.QuestionsList.Add(question);
             }
 
             return Questions;
         }
-        public int PostResult(User user,  List<Answer> Answers)
+        public async Task<int> PostResult(List<AnswerDto> Answers)
         {
+            var user = await _dbContext.users.FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
             var result = 0;
-            foreach(Question question in user.QuestionsList)
+            foreach(AnswerDto Answer in Answers)
             {
-                var questionAnswer = Answers.First(a => a.QuestionId == question.Id); 
-                    if (questionAnswer.Text == question.CorrectAnswer)
+                var dbAnswer = await _dbContext.answers.FirstOrDefaultAsync(a =>a.Id==Answer.Id);
+                var question = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id== dbAnswer.QuestionId);
+                    if (Answer.Text == question.CorrectAnswer)
                     {
                         result += question.Points;
                     }
@@ -55,9 +69,26 @@ namespace Quiz_API.Services
             user.QuestionsList.Clear();
             return result;
         }
-        List<T> GetQuestions<T>(Category category, int quantyty) where T : Question
+        public async Task<List<QuizQuestion>> GetUserQuiz()
         {
-            return _dbContext.Set<T>().Include(t => t.Answers).Where(t => t.Categorys.Contains(category)).OrderBy(o => Guid.NewGuid()).Take(quantyty).ToList();
+            var oldQuiz = new List<QuizQuestion>();
+            var user = await _dbContext.users.FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
+            if(user.QuestionsList==null)
+            {
+                throw new NotFoundException("QuizAPI not found");
+            }
+            foreach (Question question in user.QuestionsList)
+            {
+                var quizQuestion = _mapper.Map<QuizQuestion>(question);
+                oldQuiz.Add(quizQuestion);
+
+            }
+            return oldQuiz;
+        }
+        async Task<List<T>> GetQuestions<T>(Category category, int quantyty) where T : Question
+        {
+           return await _dbContext.Set<T>().Include(t => t.Answers).Where(t => t.Categorys.Contains(category)).OrderBy(o => Guid.NewGuid()).Take(quantyty).ToListAsync();
+            
         }
     }
 }
