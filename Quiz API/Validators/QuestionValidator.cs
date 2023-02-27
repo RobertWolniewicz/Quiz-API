@@ -4,7 +4,7 @@ using Quiz_API.Models;
 
 namespace Quiz_API.Validators
 {
-    public class QuestionValidator : AbstractValidator<QuestionDto>
+    public class QuestionValidator : AbstractValidator<NewQuestionModel>
     {
         public QuestionValidator(AppDB DbContext)
         {

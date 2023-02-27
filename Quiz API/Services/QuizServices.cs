@@ -34,6 +34,18 @@ namespace Quiz_API.Services
             var hardQuestions = await GetQuestions<HardQuestion>(parameters.Category, parameters.NumberOfHardQuestions);
             foreach (Question question in easyQuestions)
             {
+                var trueAnswer = new Answer()
+                {
+                    Text = "Yes",
+                    QuestionId = question.Id
+                };
+                var falseAnswer = new Answer()
+                {
+                    Text = "No",
+                    QuestionId = question.Id
+                };
+                question.Answers.Add(trueAnswer);
+                question.Answers.Add(falseAnswer);
                 var quizQuestion=  _mapper.Map<QuizQuestion>(question);
                 Questions.Add(quizQuestion);
                 user.QuestionsList.Add (question);
@@ -59,8 +71,7 @@ namespace Quiz_API.Services
             var result = 0;
             foreach(AnswerDto Answer in Answers)
             {
-                var dbAnswer = await _dbContext.answers.FirstOrDefaultAsync(a =>a.Id==Answer.Id);
-                var question = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id== dbAnswer.QuestionId);
+                    var question = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id== Answer.QuestionId);
                     if (Answer.Text == question.CorrectAnswer)
                     {
                         result += question.Points;
@@ -68,6 +79,11 @@ namespace Quiz_API.Services
             }
             user.QuestionsList.Clear();
             await _dbContext.SaveChangesAsync();
+            var EmailParameters = await _dbContext.emailParams.FirstOrDefaultAsync();
+            if(EmailParameters == null)
+            {
+                return result;
+            }
             var addreses = new List<string>()
             {
                 user.EmailAddres
@@ -77,7 +93,7 @@ namespace Quiz_API.Services
                 var companyUser = user as CompanyUser;
                 addreses.Add(companyUser.Company.EmailAddres);
             }
-            EmailSender.send(await _dbContext.emailParams.FirstAsync(), addreses , result);
+            EmailSender.send(EmailParameters, addreses , result);
             return result;
         }
         public async Task<List<QuizQuestion>> GetUserQuiz()

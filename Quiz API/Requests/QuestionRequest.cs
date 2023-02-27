@@ -15,8 +15,8 @@ namespace Quiz_API.Requests
             app.MapPost("Question", QuestionRequest.Create)
                 .Produces<QuestionDto>(StatusCodes.Status201Created)
                 .WithTags("Question")
-                .WithValidator<QuestionDto>()
-                .Accepts<QuestionDto>("application/json");
+                .WithValidator<NewQuestionModel>()
+                .Accepts<NewQuestionModel>("application/json");
 
             app.MapGet("Question", QuestionRequest.GetAll)
                 .Produces<List<QuestionDto>>()
@@ -31,8 +31,7 @@ namespace Quiz_API.Requests
                 .Produces(StatusCodes.Status204NoContent)
                 .Produces(StatusCodes.Status404NotFound)
                 .Accepts<QuestionDto>("application/json")
-                .WithTags("Question")
-                .WithValidator<QuestionDto>();
+                .WithTags("Question");
 
             app.MapDelete("Question/{Id}", QuestionRequest.Delete)
                 .Produces(StatusCodes.Status204NoContent)
@@ -63,7 +62,7 @@ namespace Quiz_API.Requests
            return Results.NoContent();
         }
         [Authorize(Roles ="Admin")]
-        public static async Task<IResult> Create(IQuestionServices service, QuestionDto newQuestion, string T)
+        public static async Task<IResult> Create(IQuestionServices service, NewQuestionModel newQuestion, string T)
         {
             MethodInfo method = service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T));
             var NewQuestion = await (Task<QuestionDto>)method.Invoke(service, new object[] { newQuestion });

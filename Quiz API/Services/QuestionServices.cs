@@ -8,7 +8,7 @@ namespace Quiz_API.Services
 {
     public interface IQuestionServices
     {
-        Task<QuestionDto> Create<T>(QuestionDto newQuestion) where T : Question, new ();
+        Task<QuestionDto> Create<T>(NewQuestionModel newQuestion) where T : Question, new ();
         Task Delete(int id);
         Task<List<QuestionDto>> GetAll();
         Task<QuestionDto> GetById(int id);
@@ -76,7 +76,7 @@ namespace Quiz_API.Services
             }
             await _dbContext.SaveChangesAsync();
         }
-        public async Task<QuestionDto> Create<T>(QuestionDto newQuestion) where T : Question, new()
+        public async Task<QuestionDto> Create<T>(NewQuestionModel newQuestion) where T : Question, new()
         {
            T createdQuestion = new()
             {
@@ -84,12 +84,12 @@ namespace Quiz_API.Services
             };
            foreach(var category in newQuestion.Categorys)
             {
-                var Category=await _dbContext.categories.FirstOrDefaultAsync(c => c.Name == category.Name);
+                var Category=await _dbContext.categories.FirstOrDefaultAsync(c => c.Name == category);
                 if (Category == null)
                 {
                     Category = new()
                     {
-                        Name = category.Name,
+                        Name = category,
                     };
                 }
                 createdQuestion.Categorys.Add(Category);
@@ -99,7 +99,7 @@ namespace Quiz_API.Services
                 {
                     var newAnswer = new Answer()
                     {
-                        Text = answer.Text
+                        Text = answer
                     };
                     createdQuestion.Answers.Add(newAnswer);
                 }
@@ -109,7 +109,7 @@ namespace Quiz_API.Services
         }
         async Task<Question> FindById(int Id)
         {
-            var result = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id == Id);
+            var result = await _dbContext.questions.Include(q => q.Answers).Include(q => q.Categorys).FirstOrDefaultAsync(q => q.Id == Id);
             if (result == null)
             {
                 throw new NotFoundException("Question not found");
