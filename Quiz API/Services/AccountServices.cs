@@ -12,7 +12,7 @@ namespace Quiz_API.Services
 {
     public interface IAccountServices
     {
-        void RegisterUser<T>(RegisterUserDto dto) where T : User, new();
+        Task RegisterUser<T>(RegisterUserDto dto) where T : User, new();
         Task<string> GenereteJwt(LoginDto dto, WebApplication builder);
         Task Delete(int id);
     }
@@ -26,7 +26,7 @@ namespace Quiz_API.Services
             _passwordHasher = passwordHasher;
             _dbContext = DbContext;
         }
-        public async void RegisterUser<T>(RegisterUserDto dto) where T : User, new()
+        public async Task RegisterUser<T>(RegisterUserDto dto) where T : User, new()
         {
             T newUser = new()
             {
@@ -52,32 +52,31 @@ namespace Quiz_API.Services
                 }
                 var companyUser = newUser as CompanyUser;
                 companyUser.Company = company;
-                _dbContext.users.Add(companyUser);
+                 _dbContext.users.Add(companyUser);
             }
             else
             {
                 _dbContext.users.Add(newUser);
             }
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         public async Task<string> GenereteJwt(LoginDto dto, WebApplication builder)
         {
             var user = await _dbContext.users.Include(u=>u.Role).FirstOrDefaultAsync(u => u.EmailAddres == dto.Email);
             if (user == null)
             {
-                throw new BadHttpRequestException("Invalid username or password");
+                throw new BadRequestException("Invalid username or password");
             }
 
            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
             if(result==PasswordVerificationResult.Failed)
             {
-                throw new BadHttpRequestException("Invalid username or password");
+                throw new BadRequestException("Invalid username or password");
             }
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier,user.Id.ToString()),
-                new Claim(ClaimTypes.Name,$"{user.Name}"),
-                new Claim(ClaimTypes.Role,$"{user.Role}"),
+                new Claim(ClaimTypes.Role,$"{user.Role.Name}"),
                 new Claim("DateOfBirth", user.DateOfBirth.ToString("dd-mm-yyyy"))
             };
             var token = new JwtSecurityToken
@@ -101,7 +100,7 @@ namespace Quiz_API.Services
                 throw new NotFoundException("User not found");
             }
             _dbContext.users.Remove(user);
-            _dbContext.SaveChangesAsync();
+           await  _dbContext.SaveChangesAsync();
         }
     }
 }

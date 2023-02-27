@@ -1,4 +1,5 @@
-﻿using Quiz_API.Entity;
+﻿using Microsoft.AspNetCore.Mvc;
+using Quiz_API.Entity;
 using Quiz_API.Models;
 using Quiz_API.Services;
 using Quiz_API.Validators;
@@ -19,7 +20,7 @@ namespace Quiz_API.Requests
                .Accepts<List<AnswerDto>>("application/json");
             return app;
         }
-        public static async Task<IResult> GetQuiz(IQuizServices service, QuizParameters parameters)
+        public static async Task<IResult> GetQuiz(IQuizServices service, [FromBody]QuizParameters parameters)
         {
             return Results.Ok(await service.GetQuiz(parameters));
         }

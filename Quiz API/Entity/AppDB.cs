@@ -18,8 +18,9 @@ namespace Quiz_API.Entity
         public DbSet<Question> questions { get; set; }
         public DbSet<User> users { get; set; }
         public DbSet<Role> roles { get; set; }
+        public DbSet<EmailParams> emailParams { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CompanyUser>(eb =>
             {

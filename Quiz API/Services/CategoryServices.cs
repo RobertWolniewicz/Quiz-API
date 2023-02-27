@@ -40,7 +40,7 @@ namespace Quiz_API.Services
         {
             var category = await FindById(id);
             _dbContext.categories.Remove(category);
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         public async Task<CategoryDto> Create(CategoryDto categoryModel)
         {
@@ -49,14 +49,14 @@ namespace Quiz_API.Services
                 Name = categoryModel.Name,
             };
             _dbContext.categories.Add(newCategory);
-            _dbContext.SaveChangesAsync();
+           await  _dbContext.SaveChangesAsync();
             return _mapper.Map<CategoryDto>(newCategory);
         }
         public async Task Update(CategoryDto updatingData)
         {
             var updatingCategory = await FindById(updatingData.Id);
             updatingCategory.Name = updatingData.Name;
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         async Task<Category> FindById(int Id)
         {

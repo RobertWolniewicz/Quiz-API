@@ -41,7 +41,7 @@ namespace Quiz_API.Services
         {
             var Question = await FindById(id);
             _dbContext.questions.Remove(Question);
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         public async Task Update(QuestionDto updatingQuestion)
         {
@@ -74,7 +74,7 @@ namespace Quiz_API.Services
                 };
                 existingQuestion.Answers.Add(newAnswer);
             }
-            _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
         }
         public async Task<QuestionDto> Create<T>(QuestionDto newQuestion) where T : Question, new()
         {
@@ -104,7 +104,7 @@ namespace Quiz_API.Services
                     createdQuestion.Answers.Add(newAnswer);
                 }
                 _dbContext.questions.Add(createdQuestion);
-                _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return  _mapper.Map<QuestionDto>(createdQuestion);
         }
         async Task<Question> FindById(int Id)

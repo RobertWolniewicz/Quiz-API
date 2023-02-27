@@ -20,11 +20,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(CategoryValidator));
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(QuestionValidator));
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(AccountValidator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(QuizValidator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(EmailParametersValidator));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddDbContext<AppDB>(
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("QuizConnectionString"))
         );
 builder.Services.AddScoped<IAccountServices, AccountServices>();
+builder.Services.AddScoped<IApplicationServices, ApplicationServices>();
 builder.Services.AddScoped<IQuizServices, QuizServices>();
 builder.Services.AddScoped<IQuestionServices, QuestionServices>();
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
@@ -62,5 +65,6 @@ app.ReqisterCategoryEndpoints();
 app.ReqisterQuestionEndpoints();
 app.ReqisterAccountEndpoints();
 app.ReqisterQuizEndpoints();
+app.ReqisterApplicationEndpoints();
 
 app.Run();

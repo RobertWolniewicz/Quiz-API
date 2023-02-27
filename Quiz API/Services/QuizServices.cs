@@ -50,7 +50,7 @@ namespace Quiz_API.Services
                 Questions.Add(quizQuestion);
                 user.QuestionsList.Add(question);
             }
-
+            await _dbContext.SaveChangesAsync();
             return Questions;
         }
         public async Task<int> PostResult(List<AnswerDto> Answers)
@@ -67,6 +67,17 @@ namespace Quiz_API.Services
                     }
             }
             user.QuestionsList.Clear();
+            await _dbContext.SaveChangesAsync();
+            var addreses = new List<string>()
+            {
+                user.EmailAddres
+            };
+            if(user is CompanyUser)
+            {
+                var companyUser = user as CompanyUser;
+                addreses.Add(companyUser.Company.EmailAddres);
+            }
+            EmailSender.send(await _dbContext.emailParams.FirstAsync(), addreses , result);
             return result;
         }
         public async Task<List<QuizQuestion>> GetUserQuiz()
