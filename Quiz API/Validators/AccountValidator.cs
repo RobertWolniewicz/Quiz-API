@@ -22,8 +22,6 @@ namespace Quiz_API.Validators
                         context.AddFailure("EmailAddres", "That email addres is taken");
                     }
                 });
-          
-
         }
     }
 }

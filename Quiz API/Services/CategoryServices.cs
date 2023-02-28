@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Quiz_API.Entity;
 using Quiz_API.Exceptions;
 using Quiz_API.Models;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Quiz_API.Services
 {
@@ -10,11 +12,10 @@ namespace Quiz_API.Services
     {
         Task<CategoryDto> Create(CategoryDto categoryModel);
         Task Delete(int id);
-        Task<List<CategoryDto>> GetAll();
+        Task<PageResult<CategoryDto>> GetAll(SieveModel query, ISieveProcessor sieveProcessor);
         Task<CategoryDto> GetById(int id);
         Task Update(CategoryDto updatingData);
     }
-
     public class CategoryServices : ICategoryServices
     {
         private readonly AppDB _dbContext;
@@ -24,11 +25,13 @@ namespace Quiz_API.Services
             _dbContext = DbContext;
             _mapper = mapper;
         }
-        public async Task<List<CategoryDto>> GetAll()
+        public async Task<PageResult<CategoryDto>> GetAll(SieveModel query, ISieveProcessor sieveProcessor)
         {
-            var categorys = await _dbContext.categories.ToListAsync();
+            var categorysQuery = _dbContext.categories.AsQueryable();
+            var categorys =  await sieveProcessor.Apply(query, categorysQuery).ToListAsync();
             var categotysDtos = _mapper.Map<List<CategoryDto>>(categorys);
-            return categotysDtos;
+            var totalCount = await sieveProcessor.Apply(query, categorysQuery, applyPagination: false, applySorting: false).CountAsync();
+            return new PageResult<CategoryDto>(categotysDtos, totalCount, query.PageSize.Value, query.Page.Value);
         }
         public async Task<CategoryDto> GetById(int id)
         {

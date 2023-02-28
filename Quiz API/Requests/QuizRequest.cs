@@ -11,13 +11,17 @@ namespace Quiz_API.Requests
         public static WebApplication ReqisterQuizEndpoints(this WebApplication app)
         {
             app.MapGet("Quiz", QuizRequest.GetQuiz)
-               .Produces<QuizQuestion>()
+               .Produces<List<QuizQuestion>>()
                .WithTags("Quiz")
                .WithValidator<QuizParameters>()
                .Accepts<QuizParameters>("application/json");
             app.MapPost("Quiz", QuizRequest.Result)
                .WithTags("Quiz")
                .Accepts<List<AnswerDto>>("application/json");
+            app.MapGet("UserQuiz", QuizRequest.UserQuiz)
+              .Produces<List<QuizQuestion>>()
+              .WithTags("Quiz");
+              
             return app;
         }
         public static async Task<IResult> GetQuiz(IQuizServices service, [FromBody]QuizParameters parameters)

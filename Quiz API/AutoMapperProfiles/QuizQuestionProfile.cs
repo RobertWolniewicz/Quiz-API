@@ -10,7 +10,6 @@ namespace Quiz_API.AutoMapperProfiles
         {
             CreateMap<Question, QuizQuestion>()
                 .ForMember(QQ => QQ.Answers, opt => opt.MapFrom(Q => Q.Answers));
-                
         }
     }
 }

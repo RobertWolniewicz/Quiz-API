@@ -9,7 +9,9 @@ using Quiz_API.Middleware;
 using Quiz_API.Models;
 using Quiz_API.Requests;
 using Quiz_API.Services;
+using Quiz_API.Sieve;
 using Quiz_API.Validators;
+using Sieve.Services;
 using System.Reflection;
 using System.Text;
 
@@ -26,6 +28,7 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddDbContext<AppDB>(
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("QuizConnectionString"))
         );
+builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 builder.Services.AddScoped<IAccountServices, AccountServices>();
 builder.Services.AddScoped<IApplicationServices, ApplicationServices>();
 builder.Services.AddScoped<IQuizServices, QuizServices>();

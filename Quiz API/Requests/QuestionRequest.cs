@@ -1,9 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Quiz_API.Entity;
 using Quiz_API.Models;
 using Quiz_API.Services;
 using Quiz_API.Validators;
+using Sieve.Models;
+using Sieve.Services;
 using System.Reflection;
 
 namespace Quiz_API.Requests
@@ -19,7 +22,7 @@ namespace Quiz_API.Requests
                 .Accepts<NewQuestionModel>("application/json");
 
             app.MapGet("Question", QuestionRequest.GetAll)
-                .Produces<List<QuestionDto>>()
+                .Produces<PageResult<QuestionDto>>()
                 .WithTags("Question");
 
             app.MapGet("Question/{Id}", QuestionRequest.GetById)
@@ -40,9 +43,9 @@ namespace Quiz_API.Requests
 
             return app;
         }
-        public static async Task<IResult> GetAll(IQuestionServices service)
+        public static async Task<IResult> GetAll(IQuestionServices service, [FromBody] SieveModel query, ISieveProcessor sieveprocessor)
         {
-            return Results.Ok(await service.GetAll());
+            return Results.Ok(await service.GetAll(query, sieveprocessor));
         }
         public static async Task<IResult> GetById(IQuestionServices service, int Id)
         {

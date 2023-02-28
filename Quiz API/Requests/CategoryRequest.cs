@@ -1,9 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Quiz_API.Entity;
 using Quiz_API.Models;
 using Quiz_API.Services;
 using Quiz_API.Validators;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Quiz_API;
 
@@ -18,7 +21,7 @@ public static class CategoryRequest
             .Accepts<CategoryDto>("application/json");
 
         app.MapGet("Category", CategoryRequest.GetAll)
-            .Produces<List<CategoryDto>>()
+            .Produces< PageResult <CategoryDto>>()
             .WithTags("Category");
 
         app.MapGet("Category/{Id}", CategoryRequest.GetById)
@@ -40,9 +43,9 @@ public static class CategoryRequest
 
         return app;
     }
-    public static async  Task<IResult> GetAll(ICategoryServices service)
+    public static async  Task<IResult> GetAll(ICategoryServices service, [FromBody] SieveModel query, ISieveProcessor sieveprocessor)
     {
-        return Results.Ok(await service.GetAll());
+        return Results.Ok(await service.GetAll(query, sieveprocessor));
     }
     [Authorize(Roles = "Admin")]
     public static async Task<IResult> GetById(ICategoryServices service, int Id)
