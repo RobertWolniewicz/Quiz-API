@@ -22,6 +22,7 @@ public static class CategoryRequest
 
         app.MapGet("Category", CategoryRequest.GetAll)
             .Produces< PageResult <CategoryDto>>()
+            .WithValidator<SieveModel>()
             .WithTags("Category");
 
         app.MapGet("Category/{Id}", CategoryRequest.GetById)

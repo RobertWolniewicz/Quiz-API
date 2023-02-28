@@ -24,6 +24,7 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(QuestionValidator));
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(AccountValidator));
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(QuizValidator));
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(EmailParametersValidator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(SieveValidator));
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddDbContext<AppDB>(
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("QuizConnectionString"))

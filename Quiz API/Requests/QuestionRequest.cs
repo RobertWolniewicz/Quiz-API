@@ -23,6 +23,7 @@ namespace Quiz_API.Requests
 
             app.MapGet("Question", QuestionRequest.GetAll)
                 .Produces<PageResult<QuestionDto>>()
+                .WithValidator<SieveModel>()
                 .WithTags("Question");
 
             app.MapGet("Question/{Id}", QuestionRequest.GetById)
