@@ -21,7 +21,7 @@ public static class CategoryRequest
             .Accepts<CategoryDto>("application/json");
 
         app.MapGet("Category", CategoryRequest.GetAll)
-            .Produces< PageResult <CategoryDto>>()
+            .Produces<PageResult<CategoryDto>>()
             .WithValidator<SieveModel>()
             .WithTags("Category");
 
@@ -44,7 +44,7 @@ public static class CategoryRequest
 
         return app;
     }
-    public static async  Task<IResult> GetAll(ICategoryServices service, [FromBody] SieveModel query, ISieveProcessor sieveprocessor)
+    public static async Task<IResult> GetAll(ICategoryServices service, [FromBody] SieveModel query, ISieveProcessor sieveprocessor)
     {
         return Results.Ok(await service.GetAll(query, sieveprocessor));
     }
@@ -58,7 +58,7 @@ public static class CategoryRequest
     public static async Task<IResult> Create(ICategoryServices service, CategoryDto newCategory)
     {
         var NewCategory = await service.Create(newCategory);
-        return Results.Created($"/Category/{NewCategory.Id}",NewCategory);
+        return Results.Created($"/Category/{NewCategory.Id}", NewCategory);
     }
     [Authorize(Roles = "Admin")]
     public static async Task<IResult> Update(ICategoryServices service, CategoryDto UpdateData)
@@ -69,7 +69,7 @@ public static class CategoryRequest
     [Authorize(Roles = "Admin")]
     public static async Task<IResult> Delete(ICategoryServices service, int Id)
     {
-       await service.Delete(Id);
+        await service.Delete(Id);
         return Results.NoContent();
     }
 }

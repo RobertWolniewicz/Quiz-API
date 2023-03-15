@@ -2,13 +2,13 @@
 {
     public class EmailParams
     {
-        public int id { get; set; }
-        public string email { get; set; }
-        public string smtpSerwer { get; set; }
-        public int smtpPort { get; set; }
-        public string password { get; set; }
-        public string subject { get; set; }
-        public string body { get; set; }
+        public int Id { get; set; }
+        public string Email { get; set; }
+        public string SmtpSerwer { get; set; }
+        public int SmtpPort { get; set; }
+        public string Password { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
 
     }
 }

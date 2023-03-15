@@ -18,13 +18,13 @@ namespace Quiz_API.Services
         }
         public async Task SetEmailParams(EmailParams emailParams)
         {
-            _dbContext.emailParams.RemoveRange(_dbContext.emailParams);
-            _dbContext.emailParams.Add(emailParams);
+            _dbContext.EmailParams.RemoveRange(_dbContext.EmailParams);
+            _dbContext.EmailParams.Add(emailParams);
             await _dbContext.SaveChangesAsync();
         }
         public async Task<EmailParams> GetEmailParams()
         {
-            return await _dbContext.emailParams.FirstAsync();
+            return await _dbContext.EmailParams.FirstAsync();
         }
     }
 }

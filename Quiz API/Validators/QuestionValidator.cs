@@ -8,10 +8,10 @@ namespace Quiz_API.Validators
     {
         public QuestionValidator(AppDB DbContext)
         {
-            RuleFor(c => c.QuestionText ).NotEmpty()
+            RuleFor(c => c.QuestionText).NotEmpty()
                 .Custom((value, context) =>
                 {
-                    var exist = DbContext.questions.Any(q => q.QuestionText == value);
+                    var exist = DbContext.Questions.Any(q => q.QuestionText == value);
                     if (exist)
                     {
                         context.AddFailure("QuestionText", "That cquestion exist");

@@ -4,7 +4,7 @@ using Quiz_API.Models;
 
 namespace Quiz_API.AutoMapperProfiles
 {
-    public class AnswerProfile: Profile
+    public class AnswerProfile : Profile
     {
         public AnswerProfile()
         {

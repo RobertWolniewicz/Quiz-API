@@ -62,10 +62,10 @@ namespace Quiz_API.Requests
         [Authorize(Roles = "Admin")]
         public static async Task<IResult> Update(IQuestionServices service, QuestionDto UpdateData)
         {
-           await service.Update(UpdateData);
-           return Results.NoContent();
+            await service.Update(UpdateData);
+            return Results.NoContent();
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public static async Task<IResult> Create(IQuestionServices service, NewQuestionModel newQuestion, string T)
         {
             MethodInfo method = service.GetType().GetMethod("Create").MakeGenericMethod(Type.GetType("Quiz_API.Entity." + T));

@@ -11,7 +11,7 @@ namespace Quiz_API.Validators
             RuleFor(c => c.Name).NotEmpty()
                 .Custom((value, context) =>
                 {
-                    var exist = DbContext.categories.Any(c => c.Name == value);
+                    var exist = DbContext.Categories.Any(c => c.Name == value);
                     if (exist)
                     {
                         context.AddFailure("Name", "That category exist");

@@ -7,7 +7,8 @@ namespace Quiz_API.Validators
     public class AccountValidator : AbstractValidator<RegisterUserDto>
     {
         public AccountValidator(AppDB DbContext)
-        {  RuleFor(u => u.Password)
+        {
+            RuleFor(u => u.Password)
                 .MinimumLength(6)
                 .Equal(u => u.ConfirmedPassword);
 
@@ -16,8 +17,8 @@ namespace Quiz_API.Validators
                 .EmailAddress()
                 .Custom((value, context) =>
                 {
-                    var takedEmail = DbContext.users.Any(u => u.EmailAddres == value);
-                    if(takedEmail)
+                    var takedEmail = DbContext.Users.Any(u => u.EmailAddres == value);
+                    if (takedEmail)
                     {
                         context.AddFailure("EmailAddres", "That email addres is taken");
                     }

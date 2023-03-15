@@ -21,10 +21,10 @@ namespace Quiz_API.Requests
             app.MapGet("UserQuiz", QuizRequest.UserQuiz)
               .Produces<List<QuizQuestion>>()
               .WithTags("Quiz");
-              
+
             return app;
         }
-        public static async Task<IResult> GetQuiz(IQuizServices service, [FromBody]QuizParameters parameters)
+        public static async Task<IResult> GetQuiz(IQuizServices service, [FromBody] QuizParameters parameters)
         {
             return Results.Ok(await service.GetQuiz(parameters));
         }

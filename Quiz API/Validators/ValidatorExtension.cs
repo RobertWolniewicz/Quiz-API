@@ -15,8 +15,8 @@ namespace Quiz_API.Validators
 
                     httpContext.Request.EnableBuffering();
                     var body = await httpContext.Request.ReadFromJsonAsync<T>();
-               
-                    if(body == null)
+
+                    if (body == null)
                     {
                         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                         await httpContext.Response.WriteAsync("Couldn't map body to request model");
@@ -24,7 +24,7 @@ namespace Quiz_API.Validators
                     }
 
                     var validationResult = validator.Validate(body);
-                    if(!validationResult.IsValid)
+                    if (!validationResult.IsValid)
                     {
                         httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
                         await httpContext.Response.WriteAsJsonAsync(validationResult.Errors);
@@ -33,10 +33,10 @@ namespace Quiz_API.Validators
 
                     httpContext.Request.Body.Position = 0;
 
-                   await  originalDelegate(httpContext);
-                
+                    await originalDelegate(httpContext);
+
                 };
-           });
+            });
             return builder;
         }
     }

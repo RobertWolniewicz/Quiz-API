@@ -5,22 +5,22 @@ namespace Quiz_API.Entity
     public class AppDB : DbContext
     {
         public AppDB(DbContextOptions<AppDB> options) : base(options)
-        { 
+        {
         }
-        public DbSet<EasyQuestion> easyQuestions { get; set; }
-        public DbSet<MidQuestion> midQuestions { get; set; }
-        public DbSet<HardQuestion> hardQuestions { get; set; }
-        public DbSet<Answer> answers { get; set; }
-        public DbSet<Company> companys { get; set; }
-        public DbSet<CompanyUser> companyUsers { get; set; }
-        public DbSet<PrivateUser> privateUsers { get; set; }
-        public DbSet<Category> categories { get; set; }
-        public DbSet<Question> questions { get; set; }
-        public DbSet<User> users { get; set; }
-        public DbSet<Role> roles { get; set; }
-        public DbSet<EmailParams> emailParams { get; set; }
+        public DbSet<EasyQuestion> EasyQuestions { get; set; }
+        public DbSet<MidQuestion> MidQuestions { get; set; }
+        public DbSet<HardQuestion> HardQuestions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Company> Companys { get; set; }
+        public DbSet<CompanyUser> CompanyUsers { get; set; }
+        public DbSet<PrivateUser> PrivateUsers { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<EmailParams> EmailParams { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CompanyUser>(eb =>
             {
@@ -45,9 +45,9 @@ namespace Quiz_API.Entity
                .WithMany(Q => Q.Users);
             });
             modelBuilder.Entity<Role>().HasData(
-                new Role() {Id=1, Name = "User"}, 
+                new Role() { Id = 1, Name = "User" },
                 new Role() { Id = 2, Name = "Admin" });
         }
-        
+
     }
 }

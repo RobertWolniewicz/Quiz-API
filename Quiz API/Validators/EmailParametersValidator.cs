@@ -7,13 +7,13 @@ namespace Quiz_API.Validators
     {
         public EmailParametersValidator()
         {
-            RuleFor(ep => ep.email).NotEmpty();
-            RuleFor(ep => ep.smtpSerwer).NotEmpty();
-            RuleFor(ep => ep.smtpPort).NotEmpty();
-            RuleFor(ep => ep.password).NotEmpty();
-            RuleFor(ep => ep.subject).NotEmpty();
-            RuleFor(ep => ep.body).NotEmpty();
-    }
-            
+            RuleFor(ep => ep.Email).NotEmpty();
+            RuleFor(ep => ep.SmtpSerwer).NotEmpty();
+            RuleFor(ep => ep.SmtpPort).NotEmpty();
+            RuleFor(ep => ep.Password).NotEmpty();
+            RuleFor(ep => ep.Subject).NotEmpty();
+            RuleFor(ep => ep.Body).NotEmpty();
+        }
+
     }
 }

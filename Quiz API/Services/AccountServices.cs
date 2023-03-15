@@ -39,37 +39,37 @@ namespace Quiz_API.Services
             newUser.Password = hashedpassword;
             if (typeof(T) == typeof(CompanyUser))
             {
-                var company = await _dbContext.companys.FirstOrDefaultAsync(c => c.Name == dto.Company.Name);
+                var company = await _dbContext.Companys.FirstOrDefaultAsync(c => c.Name == dto.Company.Name);
                 if (company == null)
                 {
                     var newCompany = new Company()
                     {
-                        Name=dto.Company.Name,
-                        EmailAddres=dto.EmailAddres,
+                        Name = dto.Company.Name,
+                        EmailAddres = dto.EmailAddres,
                     };
-                    _dbContext.companys.Add(newCompany);
+                    _dbContext.Companys.Add(newCompany);
                     company = newCompany;
                 }
                 var companyUser = newUser as CompanyUser;
                 companyUser.Company = company;
-                 _dbContext.users.Add(companyUser);
+                _dbContext.Users.Add(companyUser);
             }
             else
             {
-                _dbContext.users.Add(newUser);
+                _dbContext.Users.Add(newUser);
             }
             await _dbContext.SaveChangesAsync();
         }
         public async Task<string> GenereteJwt(LoginDto dto, WebApplication builder)
         {
-            var user = await _dbContext.users.Include(u=>u.Role).FirstOrDefaultAsync(u => u.EmailAddres == dto.Email);
+            var user = await _dbContext.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.EmailAddres == dto.Email);
             if (user == null)
             {
                 throw new BadRequestException("Invalid username or password");
             }
 
-           var result = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
-            if(result==PasswordVerificationResult.Failed)
+            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, dto.Password);
+            if (result == PasswordVerificationResult.Failed)
             {
                 throw new BadRequestException("Invalid username or password");
             }
@@ -94,13 +94,13 @@ namespace Quiz_API.Services
         }
         public async Task Delete(int id)
         {
-            var user = await _dbContext.users.FirstOrDefaultAsync(u => u.Id == id);
-            if(user==null)
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            if (user == null)
             {
                 throw new NotFoundException("User not found");
             }
-            _dbContext.users.Remove(user);
-           await  _dbContext.SaveChangesAsync();
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

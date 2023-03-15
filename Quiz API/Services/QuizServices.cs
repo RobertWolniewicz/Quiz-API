@@ -8,7 +8,7 @@ namespace Quiz_API.Services
 {
     public interface IQuizServices
     {
-        Task<List<QuizQuestion>> GetQuiz (QuizParameters parameters);
+        Task<List<QuizQuestion>> GetQuiz(QuizParameters parameters);
         Task<int> PostResult(List<AnswerDto> Answers);
         Task<List<QuizQuestion>> GetUserQuiz();
     }
@@ -27,7 +27,7 @@ namespace Quiz_API.Services
         }
         public async Task<List<QuizQuestion>> GetQuiz(QuizParameters parameters)
         {
-            var user = await _dbContext.users.Include(u => u.QuestionsList).FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
+            var user = await _dbContext.Users.Include(u => u.QuestionsList).FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
             user.QuestionsList.Clear();
             var Questions = new List<QuizQuestion>();
             var easyQuestions = await GetQuestions<EasyQuestion>(parameters.Category, parameters.NumberOfEasyQuestions);
@@ -45,9 +45,9 @@ namespace Quiz_API.Services
                     Text = "No",
                     QuestionId = question.Id
                 });
-                var quizQuestion= _mapper.Map<QuizQuestion>(question);
+                var quizQuestion = _mapper.Map<QuizQuestion>(question);
                 Questions.Add(quizQuestion);
-                user.QuestionsList.Add (question);
+                user.QuestionsList.Add(question);
             }
             foreach (Question question in midQuestions)
             {
@@ -66,24 +66,24 @@ namespace Quiz_API.Services
         }
         public async Task<int> PostResult(List<AnswerDto> Answers)
         {
-            var user = await _dbContext.users.Include(u=>u.QuestionsList).FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
-            if(user.QuestionsList.Count==0)
+            var user = await _dbContext.Users.Include(u => u.QuestionsList).FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
+            if (user.QuestionsList.Count == 0)
             {
                 throw new NotFoundException("Quiz not found");
             }
             var result = 0;
-            foreach(AnswerDto Answer in Answers)
+            foreach (AnswerDto Answer in Answers)
             {
-                    var question = await _dbContext.questions.FirstOrDefaultAsync(q => q.Id== Answer.QuestionId);
-                    if (Answer.Text == question.CorrectAnswer)
-                    {
-                        result += question.Points;
-                    }
+                var question = await _dbContext.Questions.FirstOrDefaultAsync(q => q.Id == Answer.QuestionId);
+                if (Answer.Text == question.CorrectAnswer)
+                {
+                    result += question.Points;
+                }
             }
             user.QuestionsList.Clear();
             await _dbContext.SaveChangesAsync();
-            var EmailParameters = await _dbContext.emailParams.FirstOrDefaultAsync();
-            if(EmailParameters == null)
+            var EmailParameters = await _dbContext.EmailParams.FirstOrDefaultAsync();
+            if (EmailParameters == null)
             {
                 return result;
             }
@@ -91,19 +91,19 @@ namespace Quiz_API.Services
             {
                 user.EmailAddres
             };
-            if(user is CompanyUser)
+            if (user is CompanyUser)
             {
                 var companyUser = user as CompanyUser;
                 addreses.Add(companyUser.Company.EmailAddres);
             }
-            EmailSender.send(EmailParameters, addreses , result);
+            EmailSender.send(EmailParameters, addreses, result);
             return result;
         }
         public async Task<List<QuizQuestion>> GetUserQuiz()
         {
             var oldQuiz = new List<QuizQuestion>();
-            var user = await _dbContext.users.FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
-            var userQuiz = await _dbContext.questions.Include(q=>q.Answers).Where(q=>q.Users.Contains(user)).ToListAsync();
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == _userContextServices.GetUserId);
+            var userQuiz = await _dbContext.Questions.Include(q => q.Answers).Where(q => q.Users.Contains(user)).ToListAsync();
             if (userQuiz == null)
             {
                 throw new NotFoundException("Quiz not found");
@@ -118,8 +118,8 @@ namespace Quiz_API.Services
         }
         async Task<List<T>> GetQuestions<T>(string category, int quantyty) where T : Question
         {
-           var chosenCategory = await _dbContext.categories.FirstOrDefaultAsync(c => c.Name == category);
-           return await _dbContext.Set<T>().Include(t => t.Answers).Where(t => t.Categorys.Contains(chosenCategory)).OrderBy(o => Guid.NewGuid()).Take(quantyty).ToListAsync();
+            var chosenCategory = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Name == category);
+            return await _dbContext.Set<T>().Include(t => t.Answers).Where(t => t.Categorys.Contains(chosenCategory)).OrderBy(o => Guid.NewGuid()).Take(quantyty).ToListAsync();
         }
     }
 }

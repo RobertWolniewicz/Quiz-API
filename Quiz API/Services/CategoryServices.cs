@@ -27,22 +27,22 @@ namespace Quiz_API.Services
         }
         public async Task<PageResult<CategoryDto>> GetAll(SieveModel query, ISieveProcessor sieveProcessor)
         {
-            var categorysQuery = _dbContext.categories.AsQueryable();
-            var categorys =  await sieveProcessor.Apply(query, categorysQuery).ToListAsync();
+            var categorysQuery = _dbContext.Categories.AsQueryable();
+            var categorys = await sieveProcessor.Apply(query, categorysQuery).ToListAsync();
             var categotysDtos = _mapper.Map<List<CategoryDto>>(categorys);
             var totalCount = await sieveProcessor.Apply(query, categorysQuery, applyPagination: false, applySorting: false).CountAsync();
             return new PageResult<CategoryDto>(categotysDtos, totalCount, query.PageSize.Value, query.Page.Value);
         }
         public async Task<CategoryDto> GetById(int id)
         {
-            var category =await FindById(id);
+            var category = await FindById(id);
             var categotysDto = _mapper.Map<CategoryDto>(category);
             return categotysDto;
         }
         public async Task Delete(int id)
         {
             var category = await FindById(id);
-            _dbContext.categories.Remove(category);
+            _dbContext.Categories.Remove(category);
             await _dbContext.SaveChangesAsync();
         }
         public async Task<CategoryDto> Create(CategoryDto categoryModel)
@@ -51,8 +51,8 @@ namespace Quiz_API.Services
             {
                 Name = categoryModel.Name,
             };
-            _dbContext.categories.Add(newCategory);
-           await  _dbContext.SaveChangesAsync();
+            _dbContext.Categories.Add(newCategory);
+            await _dbContext.SaveChangesAsync();
             return _mapper.Map<CategoryDto>(newCategory);
         }
         public async Task Update(CategoryDto updatingData)
@@ -63,12 +63,12 @@ namespace Quiz_API.Services
         }
         async Task<Category> FindById(int Id)
         {
-           var  result = await _dbContext.categories.FirstOrDefaultAsync(c => c.Id == Id);
-           if (result == null)
-           {
-              throw new NotFoundException("Question not found");
-           }
-           return result;
+            var result = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Id == Id);
+            if (result == null)
+            {
+                throw new NotFoundException("Question not found");
+            }
+            return result;
         }
     }
 }

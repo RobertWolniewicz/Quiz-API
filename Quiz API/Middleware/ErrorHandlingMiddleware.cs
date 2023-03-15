@@ -20,10 +20,10 @@ namespace Quiz_API.Middleware
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(notFoundException.Message);
             }
-           catch (Exception e)
+            catch (Exception)
             {
-               context.Response.StatusCode = 500;
-               await context.Response.WriteAsync("Something went wrong");
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsync("Something went wrong");
             }
         }
     }

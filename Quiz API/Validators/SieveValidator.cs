@@ -7,8 +7,8 @@ namespace Quiz_API.Validators
     {
         public SieveValidator()
         {
-            RuleFor(sm => sm.PageSize).NotEmpty();
-            RuleFor(sm => sm.Page).NotEmpty();
+            RuleFor(sm => sm.PageSize).NotNull().GreaterThan(0);
+            RuleFor(sm => sm.Page).NotNull().GreaterThan(0);
 
         }
     }
