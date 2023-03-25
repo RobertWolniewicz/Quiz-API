@@ -60,6 +60,7 @@ namespace Quiz_API.Services
         {
             var updatingCategory = await FindById(updatingData.Id);
             updatingCategory.Name = updatingData.Name;
+            updatingCategory.CorrectAnswersPercent = updatingData.CorrectAnswersPercent;
             await _dbContext.SaveChangesAsync();
         }
         async Task<Category> FindById(int Id)

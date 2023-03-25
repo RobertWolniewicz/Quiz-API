@@ -28,7 +28,7 @@ namespace Quiz_API.Services
         }
         public async Task RegisterUser<T>(RegisterUserDto dto) where T : User, new()
         {
-            T newUser = new()
+            T newUser = new T()
             {
                 Name = dto.Name,
                 EmailAddres = dto.EmailAddres,

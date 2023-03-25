@@ -8,7 +8,6 @@ namespace Quiz_API.Services
         Task SetEmailParams(EmailParams emailParams);
         Task<EmailParams> GetEmailParams();
     }
-
     public class ApplicationServices : IApplicationServices
     {
         private readonly AppDB _dbContext;
