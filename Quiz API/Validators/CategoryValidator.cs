@@ -17,6 +17,8 @@ namespace Quiz_API.Validators
                         context.AddFailure("Name", "That category exist");
                     }
                 });
+            RuleFor(c => c.CorrectAnswersPercent).NotEmpty();
+   
         }
     }
 }

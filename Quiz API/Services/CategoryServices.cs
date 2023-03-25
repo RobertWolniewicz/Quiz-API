@@ -50,6 +50,7 @@ namespace Quiz_API.Services
             var newCategory = new Category()
             {
                 Name = categoryModel.Name,
+                CorrectAnswersPercent = categoryModel.CorrectAnswersPercent,
             };
             _dbContext.Categories.Add(newCategory);
             await _dbContext.SaveChangesAsync();

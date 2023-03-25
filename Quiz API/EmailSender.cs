@@ -6,7 +6,7 @@ namespace Quiz_API
 {
     public class EmailSender
     {
-        public static void send(EmailParams emailparams, List<string> addreses, int value)
+        public static void send(EmailParams emailparams, List<string> addreses, double value)
         {
             var smtpClient = new SmtpClient(emailparams.SmtpSerwer, emailparams.SmtpPort);
             smtpClient.Credentials = new NetworkCredential(emailparams.Email, emailparams.Password);
